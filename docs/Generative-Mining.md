@@ -110,6 +110,37 @@ PR — we're happy to add new providers and trust anchors.
   trusted issuer with the validator's C2PA verifier.
 - **Website**: [maxcheapai.com](https://maxcheapai.com/en/docs)
 
+### PlenXAI Service
+- **API Key**: `PLENXAI_API_KEY`
+- **Modality**: Video
+- **Model**: Omni Flash (`omni-flash-video`) through
+  `/api/v1/developer/generate/video-omni`, fixed to the PlenXAI `flow` server
+- **Resolution mapping**: SN34 480p requests use Omni Flash's lowest supported
+  720p tier; 720p and 1080p are forwarded unchanged
+- **Duration**: Defaults to 4 seconds and maps requested durations to the nearest
+  supported 4/6/8/10-second value
+- **Restart safety**: The PlenXAI `task_id` is checkpointed so a restarted miner
+  resumes the existing generation instead of submitting a duplicate
+- **C2PA preservation**: The provider's MP4 is downloaded and returned byte-for-byte;
+  no resizing or transcoding is performed. Run the live C2PA test with a real key
+  before production because PlenXAI's API documentation does not guarantee C2PA.
+- **Live C2PA test**: Export `PLENXAI_API_KEY` and run
+  `RUN_PLENXAI_C2PA_TEST=1 .venv/bin/pytest tests/generator/test_plenxai_service.py::test_live_video_result_has_trusted_c2pa`.
+  This requests one real 4-second 720p Omni Flash video; provider-reported
+  failures can trigger the configured retries and spend additional credits.
+- **Website**: [plenxai.com/docs](https://plenxai.com/docs)
+
+After installation, generate one optional 4-second 720p test video using the
+same provider implementation as the miner:
+
+```bash
+./.venv/bin/python test_plenxai_video.py
+```
+
+The script reads `PLENXAI_API_KEY` from `.env`, submits at most one generation,
+and saves the downloaded MP4 under `test-videos/`. Use `--env-file .env.HOTKEY`
+when the key is stored in a hotkey-specific environment file.
+
 ### CKey Service
 - **API Key**: `CKEY_API_KEY`
 - **Modalities**: Image
@@ -182,10 +213,10 @@ Configure which service handles each modality in your `.env.gen_miner` file:
 
 ```bash
 IMAGE_SERVICE=gpti2         # openai, openrouter, stabilityai, maxcheapai, ckey, vertexai, vertexgen, gpti2, or none
-VIDEO_SERVICE=maxcheapai    # openai, openrouter, runway, maxcheapai, or none
+VIDEO_SERVICE=plenxai       # openai, openrouter, runway, maxcheapai, plenxai, or none
 GPTI2_API_KEY=sk-your-key
 GPTI2_MODEL=gpt-image-2.5-sunburst
-MAXCHEAPAI_API_KEY=mcai_your_key
+PLENXAI_API_KEY=pk_your_key
 ```
 
 All configured services must produce **C2PA-signed content**. Setting a modality to `none` disables it (requests will be rejected).
@@ -348,6 +379,8 @@ Your miner exposes these endpoints for validators:
 - `MINER_TASK_TIMEOUT`: Legacy compatibility timeout (default: 1800 seconds)
 - `MAXCHEAPAI_POLL_TIMEOUT`: MaxCheapAI generation deadline (default: 1800 seconds)
 - `MAXCHEAPAI_MAX_RETRIES`: Retries after a provider-reported failure (default: 3)
+- `PLENXAI_POLL_TIMEOUT`: PlenXAI generation deadline (default: 1800 seconds)
+- `PLENXAI_MAX_RETRIES`: Retries after a provider-reported failure (default: 3)
 - `CKEY_REQUEST_TIMEOUT`: CKey synchronous generation timeout (default: 1800 seconds)
 - `CKEY_DOWNLOAD_TIMEOUT`: CKey media download timeout (default: 600 seconds)
 - `CKEY_RETRY_DELAY`: Delay between CKey attempts (default: 10 seconds)

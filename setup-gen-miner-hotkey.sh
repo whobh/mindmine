@@ -74,6 +74,7 @@ service_label() {
         stabilityai) printf 'Stability AI' ;;
         runway) printf 'Runway' ;;
         maxcheapai) printf 'MaxCheapAI' ;;
+        plenxai) printf 'PlenXAI (Omni Flash)' ;;
         ckey) printf 'CKey' ;;
         vertexgen) printf 'VertexGen' ;;
         gpti2) printf 'GPTi2' ;;
@@ -94,6 +95,7 @@ service_key_name() {
             fi
             ;;
         maxcheapai) printf 'MAXCHEAPAI_API_KEY' ;;
+        plenxai) printf 'PLENXAI_API_KEY' ;;
         ckey) printf 'CKEY_API_KEY' ;;
         vertexgen) printf 'VERTEXGEN_API_KEY' ;;
         gpti2) printf 'GPTI2_API_KEY' ;;
@@ -143,7 +145,7 @@ choose_service() {
 
 is_provider_key() {
     case "$1" in
-        OPENAI_API_KEY|OPEN_ROUTER_API_KEY|STABILITY_API_KEY|RUNWAYML_API_KEY|RUNWAYML_API_SECRET|MAXCHEAPAI_API_KEY|CKEY_API_KEY|VERTEXGEN_API_KEY|GPTI2_API_KEY)
+        OPENAI_API_KEY|OPEN_ROUTER_API_KEY|STABILITY_API_KEY|RUNWAYML_API_KEY|RUNWAYML_API_SECRET|MAXCHEAPAI_API_KEY|PLENXAI_API_KEY|CKEY_API_KEY|VERTEXGEN_API_KEY|GPTI2_API_KEY)
             return 0
             ;;
         *) return 1 ;;
@@ -220,7 +222,7 @@ for service in openai openrouter stabilityai maxcheapai ckey vertexgen gpti2; do
 done
 
 video_options=()
-for service in openai openrouter runway maxcheapai; do
+for service in openai openrouter runway maxcheapai plenxai; do
     has_service_key "$service" && video_options+=("$service")
 done
 

@@ -70,5 +70,6 @@ downloaded_models/*
 
 base_miner/test_output/*
 generated_content/*
+test-videos/
 wandb/*
 sample-images/

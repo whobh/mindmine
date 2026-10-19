@@ -9,6 +9,7 @@ from .gpti2_service import GPTi2Service
 from .maxcheapai_service import MaxCheapAIService
 from .openai_service import OpenAIService
 from .openrouter_service import OpenRouterService
+from .plenxai_service import PlenXAIService
 from .runway_service import RunwayService
 from .stabilityai_service import StabilityAIService
 from .vertexai_service import VertexAIService
@@ -20,6 +21,7 @@ SERVICE_MAP = {
     "stabilityai": StabilityAIService,
     "runway": RunwayService,
     "maxcheapai": MaxCheapAIService,
+    "plenxai": PlenXAIService,
     "ckey": CKeyService,
     "vertexai": VertexAIService,
     "vertexgen": VertexGenService,
@@ -35,7 +37,7 @@ class ServiceRegistry:
 
     Set per-modality service via env vars:
       IMAGE_SERVICE=openai|openrouter|stabilityai|maxcheapai|ckey|vertexai|vertexgen|gpti2|none
-      VIDEO_SERVICE=openai|openrouter|stabilityai|runway|maxcheapai|none
+      VIDEO_SERVICE=openai|openrouter|stabilityai|runway|maxcheapai|plenxai|none
 
     Services:
       - openai: DALL-E 3 / Sora video (requires OPENAI_API_KEY) - produces C2PA-signed content
@@ -45,6 +47,7 @@ class ServiceRegistry:
       - stabilityai: Stability AI images (requires STABILITY_API_KEY) - produces C2PA-signed content
       - runway: Runway text-to-video (requires RUNWAYML_API_KEY or RUNWAYML_API_SECRET)
       - maxcheapai: Nano Banana Pro images + Veo 3.1 video (requires MAXCHEAPAI_API_KEY)
+      - plenxai: Omni Flash video (requires PLENXAI_API_KEY)
       - ckey: Nano Banana Pro images with Nano Banana 2 fallback (requires CKEY_API_KEY)
       - vertexai: Nano Banana Pro images through Vertex AI (uses Google ADC)
       - vertexgen: Nano Banana Pro images through VertexGen (requires VERTEXGEN_API_KEY)
@@ -179,7 +182,7 @@ class ServiceRegistry:
             ),
             "VIDEO_SERVICE": (
                 "Service for videos: openai, openrouter, stabilityai, runway, "
-                "maxcheapai, or none"
+                "maxcheapai, plenxai, or none"
             ),
         }
 

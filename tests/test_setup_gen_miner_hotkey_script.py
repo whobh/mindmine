@@ -164,6 +164,31 @@ def test_creates_multiple_hotkeys_with_the_same_chosen_settings(tmp_path):
     ]
 
 
+def test_offers_plenxai_for_video_and_copies_only_its_key(tmp_path):
+    project_dir, env, command_log = _fake_project(
+        tmp_path,
+        "CKEY_API_KEY=ckey-test-secret\n"
+        "PLENXAI_API_KEY=pk_plenx-test-secret\n"
+        "MAXCHEAPAI_API_KEY=\n",
+    )
+
+    result = _run_setup(project_dir, env, "cold-wallet\nhotkey-7\n1\n1\n")
+
+    assert result.returncode == 0, result.stdout + result.stderr
+    generated, _ = _read_env(project_dir / ".env.hotkey-7")
+    assert generated["IMAGE_SERVICE"] == "ckey"
+    assert generated["VIDEO_SERVICE"] == "plenxai"
+    assert generated["CKEY_API_KEY"] == "ckey-test-secret"
+    assert generated["PLENXAI_API_KEY"] == "pk_plenx-test-secret"
+    assert "MAXCHEAPAI_API_KEY" not in generated
+    assert "PlenXAI (Omni Flash)" in result.stderr
+    assert "pk_plenx-test-secret" not in result.stdout + result.stderr
+    assert command_log.read_text().splitlines() == [
+        ".env.hotkey-7",
+        "startOrRestart gen_miner.config.js",
+    ]
+
+
 def test_overwrites_an_existing_hotkey_env_but_preserves_its_port(tmp_path):
     project_dir, env, command_log = _fake_project(
         tmp_path, "MAXCHEAPAI_API_KEY=maxcheap-test-secret\n"
